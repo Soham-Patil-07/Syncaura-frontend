@@ -59,9 +59,7 @@ const Theme = () => {
   const handleLanguageChange = (e) => {
     const code = e.target.value;
     setLanguage(code);
-    localStorage.setItem("app_language", code);
-    i18n.changeLanguage(code);
-    window.dispatchEvent(new CustomEvent("languageChange", { detail: { language: code } }));
+    i18n.changeLanguage(code); // already handles localStorage + event internally
   };
 
   const handleFontChange = (e) => dispatch(setFont(e.target.value));
