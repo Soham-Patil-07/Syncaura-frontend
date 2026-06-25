@@ -87,7 +87,7 @@ const SignIn = () => {
    };
  
    const onError = (errors) => {
-    isSubmitting(false)
+    setIsSubmitting(false)
      const firstError = Object.values(errors)[0];
  
      if (firstError?.message) {
@@ -132,20 +132,40 @@ const SignIn = () => {
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">📧</span>
             <input
-  type="email"
-  placeholder="Email Address"
-  className="w-full border border-gray-300 px-4 py-3 rounded-lg bg-white text-gray-700 placeholder-gray-400 focus:outline-none"
-/>
+              type="email"
+              placeholder="Email Address"
+              {...register("email", {
+                required: "Email is required",
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: "Please enter a valid email",
+                },
+              })}
+              className="w-full border border-gray-300 px-4 py-3 rounded-lg bg-white text-gray-700 placeholder-gray-400 focus:outline-none"
+            />
+            {errors.email && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.email.message}
+              </p>
+            )}
           </div>
 
           {/* PASSWORD */}
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">🔒</span>
             <input
-  type="password"
-  placeholder="Password"
-  className="w-full border border-gray-300 px-4 py-3 rounded-lg bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-/>
+              type="password"
+              placeholder="Password"
+              {...register("password", {
+                required: "Password is required",
+              })}
+              className="w-full border border-gray-300 px-4 py-3 rounded-lg bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            {errors.password && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.password.message}
+              </p>
+            )}
           </div>
 
           <p className="text-sm text-right text-blue-500 cursor-pointer">
