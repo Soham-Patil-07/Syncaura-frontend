@@ -3,40 +3,31 @@ import { useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router-dom";
 
 const ProtectRoute = ({ allowedRoles, publicOnly = false }) => {
-  const { user, isAuthenticated, authChecking, isLoading } = useSelector(
-    (state) => state.auth,
-  );
 
-  const normalizedRole = user?.role?.toLowerCase();
+  // Determine the role-based home path for authenticated users
+  const { user, isLoading, isAuthenticated } = useSelector((state) => state.auth);
 
-  const getDefaultRoute = () => {
-    if (normalizedRole === "admin") return "/admin";
-    if (normalizedRole === "co-admin" || normalizedRole === "coadmin") return "/co-admin";
+  if (isLoading) return <h1>Loading...</h1>;
+
+  const getRoleHome = () => {
+    if (user?.role === "admin") return "/admin";
+    if (user?.role === "co-admin") return "/co-admin";
     return "/user-dashboard";
   };
 
-  if (authChecking || isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-black text-slate-700 dark:text-slate-200">
-        Loading...
-      </div>
-    );
+  // Public-only routes (sign-in, sign-up, home): redirect authenticated users away
+  if (publicOnly && isAuthenticated && user) {
+    return <Navigate to={getRoleHome()} replace />;
   }
 
-  if (publicOnly) {
-    if (isAuthenticated && user) {
-      return <Navigate to={getDefaultRoute()} replace />;
-    }
-
-    return <Outlet />;
-  }
-
-  if (!isAuthenticated || !user) {
+  // Protected routes: redirect unauthenticated users to sign-in
+  if (!publicOnly && !isAuthenticated) {
     return <Navigate to="/sign-in" replace />;
   }
 
-  if (allowedRoles?.length && !allowedRoles.includes(normalizedRole)) {
-    return <Navigate to={getDefaultRoute()} replace />;
+  // Role-based guard: redirect if user doesn't have the required role
+  if (!publicOnly && allowedRoles && !allowedRoles.includes(user?.role)) {
+    return <Navigate to={getRoleHome()} replace />;
   }
 
   return <Outlet />;

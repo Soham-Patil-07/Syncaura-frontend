@@ -4,9 +4,11 @@ import {
   loginUser,
   changePassword,
   refreshAccessToken,
+  fetchUserProfile,
+  updateUserProfile,
 } from "../features/authThunks";
 
-const storedToken = localStorage.getItem("token") || localStorage.getItem("accessToken");
+const token = localStorage.getItem("accessToken") || localStorage.getItem("token");
 
 const initialState = {
   user: null,
@@ -15,6 +17,7 @@ const initialState = {
   error: null,
   isAuthenticated: !!storedToken,
   authChecking: true,
+  profileLoading: false,
 };
 
 const authSlice = createSlice({
@@ -30,6 +33,7 @@ const authSlice = createSlice({
       state.token = token;
       state.isAuthenticated = true;
       if (token) {
+        localStorage.setItem("accessToken", token);
         localStorage.setItem("token", token);
       }
     },
@@ -42,6 +46,7 @@ const authSlice = createSlice({
       localStorage.removeItem("token");
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
+      localStorage.removeItem("token");
       state.isLoading = false;
     },
   },
@@ -105,6 +110,37 @@ const authSlice = createSlice({
         state.isLoading=false
         state.isAuthenticated=false
         state.user=null
+      })
+
+      // User Profile
+      .addCase(fetchUserProfile.pending, (state) => {
+        state.profileLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchUserProfile.fulfilled, (state, action) => {
+        state.profileLoading = false;
+        const profile = action.payload?.user || action.payload?.data || action.payload;
+        state.user = profile;
+      })
+      .addCase(fetchUserProfile.rejected, (state, action) => {
+        state.profileLoading = false;
+        state.error = action.payload;
+      })
+      .addCase(updateUserProfile.pending, (state) => {
+        state.profileLoading = true;
+        state.error = null;
+      })
+      .addCase(updateUserProfile.fulfilled, (state, action) => {
+        state.profileLoading = false;
+        const profile = action.payload?.user || action.payload?.data || action.payload;
+        state.user = {
+          ...state.user,
+          ...profile,
+        };
+      })
+      .addCase(updateUserProfile.rejected, (state, action) => {
+        state.profileLoading = false;
+        state.error = action.payload;
       })
 
      
