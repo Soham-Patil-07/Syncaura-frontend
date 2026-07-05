@@ -176,7 +176,7 @@ export default function App() {
               <Route
                 path="/tasks"
                 element={
-                  <MainLayout TopbarComponent={Header}>
+                  <MainLayout TopbarComponent={Header} SideBar={MobileSidebar}>
                     <Tasks />
                   </MainLayout>
                 }
