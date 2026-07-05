@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Sun, Moon } from 'lucide-react';
+import { useNavigate } from "react-router-dom";
 import { useDarkMode } from "../../hooks/useDarkMode";
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -7,6 +8,10 @@ const Navbar = () => {
   const navigate = useNavigate();
   const { theme, toggleTheme } = useDarkMode();
   const [activeSection, setActiveSection] = useState('home');
+<<<<<<< HEAD
+=======
+  const navigate = useNavigate();
+>>>>>>> parent of 92da934 (Merge pull request #76 from amitkumar073/main)
 
   useEffect(() => {
     const handleScroll = () => {
